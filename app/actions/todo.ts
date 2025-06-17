@@ -22,46 +22,27 @@ export async function addTodo(formData: FormData) {
   }
 }
 
-export async function toggleTodo(formData: FormData) {
+export async function deleteTodos(formData: FormData) {
   try {
-    const id = String(formData.get('id'));
-    const completedStr = String(formData.get('completed'));
-    const completed = completedStr === 'true';
-    
-    const { error } = await supabase
-      .from('todos')
-      .update({ completed: !completed })
-      .eq('id', id);
-    
-    if (error) {
-      console.error('Error toggling todo:', error);
-      throw error;
-    }
-    
-    revalidatePath('/');
-  } catch (error) {
-    console.error('Failed to toggle todo:', error);
-    throw error;
-  }
-}
+    // Retrieve all selected ids from the submitted form
+    const ids = formData.getAll('ids').map((id) => String(id));
 
-export async function deleteTodo(formData: FormData) {
-  try {
-    const id = String(formData.get('id'));
-    
+    if (ids.length === 0) return;
+
     const { error } = await supabase
       .from('todos')
       .delete()
-      .eq('id', id);
-    
+      .in('id', ids);
+
     if (error) {
-      console.error('Error deleting todo:', error);
+      console.error('Error deleting selected todos:', error);
       throw error;
     }
-    
+
+    // Revalidate the homepage so the list refreshes
     revalidatePath('/');
   } catch (error) {
-    console.error('Failed to delete todo:', error);
+    console.error('Failed to bulk delete todos:', error);
     throw error;
   }
 } 

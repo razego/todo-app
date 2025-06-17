@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import TodoItem from '@/components/TodoItem';
-import { addTodo } from './actions/todo';
+import { addTodo, deleteTodos } from './actions/todo';
 
 export default async function Home() {
   const { data: todos } = await supabase
@@ -9,32 +9,45 @@ export default async function Home() {
     .order('updated_at', { ascending: true });
   
   return (
-    <div className="mx-auto max-w-md py-10">
-      <h1 className="text-2xl font-bold mb-4 text-center">Todo List</h1>
+    <div className="container mx-auto max-w-md py-10 px-4">
+      <h1 className="text-3xl font-bold mb-6 text-center">Todo List</h1>
 
       {/* Add Todo Form */}
-      <form action={addTodo} className="flex gap-2 mb-6">
+      <form action={addTodo} className="flex gap-2 mb-8">
         <input
           type="text"
           name="title"
           placeholder="New todo..."
-          className="flex-1 border rounded px-3 py-2"
+          className="input input-bordered flex-1"
           required
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
+          className="btn btn-primary"
         >
           Add
         </button>
       </form>
 
-      {/* Todo Items */}
-      <ul className="space-y-3">
-        {todos?.map((todo) => (
-          <TodoItem key={todo.id} todo={todo} />
-        ))}
-      </ul>
+      {/* Bulk Delete Form wrapping list so button can be hidden until selection */}
+      <form action={deleteTodos} className="mb-8">
+        {/* Delete Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            type="submit"
+            className="btn btn-error bulk-delete-btn invisible"
+          >
+            Delete Selected
+          </button>
+        </div>
+
+        {/* Todo Items */}
+        <ul className="list bg-base-100 rounded-box shadow-md">
+          {todos?.map((todo) => (
+            <TodoItem key={todo.id} todo={todo} />
+          ))}
+        </ul>
+      </form>
     </div>
   );
 }
