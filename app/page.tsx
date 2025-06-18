@@ -1,13 +1,15 @@
 import TodoItem from '@/components/TodoItem';
 import { addTodo, deleteTodos, getTodos } from './actions/todo';
 
-interface HomeProps {
-  searchParams?: { q?: string };
-}
+type PageSearchParams = { q?: string };
 
-export default async function Home({ searchParams }: HomeProps) {
-  const q = searchParams?.q?.trim() ?? '';
-
+export default async function Home({
+  searchParams,
+}: {
+  /** When the component is async, Next passes a Promise */
+  searchParams?: Promise<PageSearchParams>;
+}) {
+  const { q = '' } = (await searchParams) ?? {};
   const todos = await getTodos(q);
   
   return (
