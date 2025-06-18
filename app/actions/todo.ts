@@ -80,4 +80,25 @@ export async function updateTodo(formData: FormData) {
     console.error('Failed to update todo:', error);
     throw error;
   }
-} 
+}
+
+export async function getTodos(q: string | undefined | null = '') {
+  let query = supabase
+    .from('todos')
+    .select('*')
+    .order('updated_at', { ascending: true });
+
+  if (q && q.trim()) {
+    const term = q.trim();
+    query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%`);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching todos:', error);
+    throw error;
+  }
+
+  return data ?? [];
+}
