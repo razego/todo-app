@@ -45,4 +45,39 @@ export async function deleteTodos(formData: FormData) {
     console.error('Failed to bulk delete todos:', error);
     throw error;
   }
+}
+
+export async function updateTodo(formData: FormData) {
+  try {
+    // Extract fields from the form data
+    const id = String(formData.get('id'));
+    if (!id) return;
+
+    const title = String(formData.get('title') ?? '').trim();
+    const descriptionRaw = formData.get('description');
+    const description = descriptionRaw !== null ? String(descriptionRaw).trim() : null;
+
+    // Checkbox returns 'on' when checked, otherwise null
+    const completed = formData.get('completed') !== null;
+
+    const { error } = await supabase
+      .from('todos')
+      .update({
+        title,
+        description,
+        completed,
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating todo:', error);
+      throw error;
+    }
+
+    // Revalidate the homepage so the list refreshes
+    revalidatePath('/');
+  } catch (error) {
+    console.error('Failed to update todo:', error);
+    throw error;
+  }
 } 

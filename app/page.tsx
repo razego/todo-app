@@ -29,9 +29,8 @@ export default async function Home() {
         </button>
       </form>
 
-      {/* Bulk Delete Form wrapping list so button can be hidden until selection */}
-      <form action={deleteTodos} className="mb-8">
-        {/* Delete Button */}
+      {/* Bulk Delete Form */}
+      <form id="delete-form" action={deleteTodos} className="mb-8">
         <div className="flex justify-end mb-4">
           <button
             type="submit"
@@ -40,14 +39,14 @@ export default async function Home() {
             Delete Selected
           </button>
         </div>
-
-        {/* Todo Items */}
-        <ul className="list bg-base-100 rounded-box shadow-md">
-          {todos?.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} />
-          ))}
-        </ul>
       </form>
+
+      {/* Todo Items List */}
+      <ul className="list bg-base-100 rounded-box shadow-md">
+        {todos?.map((todo) => (
+          <TodoItem key={todo.id} todo={todo} />
+        ))}
+      </ul>
     </div>
   );
 }
