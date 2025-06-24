@@ -1,70 +1,39 @@
-import TodoItem from '@/components/TodoItem';
-import { addTodo, deleteTodos, getTodos } from './actions/todo';
+import * as React from 'react';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import NextLink from 'next/link';
+import Button from '@/components/ui/Button';
 
-type PageSearchParams = { q?: string };
-
-export default async function Home({
-  searchParams,
-}: {
-  /** When the component is async, Next passes a Promise */
-  searchParams?: Promise<PageSearchParams>;
-}) {
-  const { q = '' } = (await searchParams) ?? {};
-  const todos = await getTodos(q);
-  
+export default function Home() {
   return (
-    <div className="container mx-auto max-w-md py-10 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Todo List</h1>
+    <Container maxWidth="lg">
+      <Box
+        sx={{
+          my: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+          Todo App
+        </Typography>
 
-      {/* Search Form (GET) */}
-      <form method="GET" className="flex gap-2 mb-4">
-        <input
-          type="text"
-          name="q"
-          defaultValue={q}
-          placeholder="Search todos..."
-          className="input input-bordered flex-1"
-        />
-        <button type="submit" className="btn">
-          Search
-        </button>
-      </form>
+        <Box sx={{ display: 'flex', gap: 2 }}>  
 
-      {/* Add Todo Form */}
-      <form action={addTodo} className="flex gap-2 mb-8">
-        <input
-          type="text"
-          name="title"
-          placeholder="New todo..."
-          className="input input-bordered flex-1"
-          required
-        />
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
-          Add
-        </button>
-      </form>
+        <Button variant="primary" size="large">Click me</Button>
+        <Button variant="secondary" size="large" >Click me</Button>
+        <Button variant="outline" size="large">Click me</Button>
+        <Button variant="ghost" size="large">Click me</Button>
+        <Button variant="danger" size="large">Click me</Button>
 
-      {/* Bulk Delete Form */}
-      <form id="delete-form" action={deleteTodos} className="mb-8">
-        <div className="flex justify-end mb-4">
-          <button
-            type="submit"
-            className="btn btn-error bulk-delete-btn invisible"
-          >
-            Delete Selected
-          </button>
-        </div>
-      </form>
+        </Box>
 
-      {/* Todo Items List */}
-      <ul className="list bg-base-100 rounded-box shadow-md">
-        {todos?.map((todo) => (
-          <TodoItem key={todo.id} todo={todo} />
-        ))}
-      </ul>
-    </div>
+
+      </Box>
+    </Container>
   );
 }
