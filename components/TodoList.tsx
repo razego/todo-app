@@ -2,19 +2,11 @@
 import * as React from 'react';
 import { Typography, Box, Paper } from '@mui/material';
 import { supabase } from '@/lib/supabase';
+import { Todo } from '@/types';
 import AddTodoForm from '@/components/AddTodoForm';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
 import EditTodoModal from '@/components/EditTodoModal';
 import TodoItem from '@/components/TodoItem';
-
-export interface Todo {
-  id: string;
-  title: string;
-  description: string | null;
-  completed: boolean;
-  created_at: string;
-  updated_at: string;
-}
 
 export interface TodoListProps {
   initialTodos?: Todo[];
@@ -143,11 +135,11 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
               key={todo.id}
               todo={todo}
               onToggleComplete={handleToggleComplete}
-              onEdit={(todo) => {
+              onEdit={(todo: Todo) => {
                 setSelectedTodo(todo);
                 setEditModalOpen(true);
               }}
-              onDelete={(todo) => {
+              onDelete={(todo: Todo) => {
                 setSelectedTodo(todo);
                 setDeleteModalOpen(true);
               }}
@@ -178,7 +170,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
         onSave={handleEditTodo}
         todo={selectedTodo ? {
           ...selectedTodo,
-          name: selectedTodo.title,
+          title: selectedTodo.title,
           description: selectedTodo.description || '',
         } : null}
         loading={isEditing}

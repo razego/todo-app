@@ -1,24 +1,7 @@
 'use client';
 import * as React from 'react';
 import { Typography, Box } from '@mui/material';
-import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Checkbox from '@/components/ui/Checkbox';
-
-export interface Todo {
-  id: string;
-  name: string;
-  description: string;
-  completed: boolean;
-}
-
-export interface TodoUpdateData {
-  id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-}
+import { Todo, TodoUpdateData } from '@/types';
 
 export interface EditTodoModalProps {
   open: boolean;
@@ -27,6 +10,11 @@ export interface EditTodoModalProps {
   todo: Todo | null;
   loading?: boolean;
 }
+
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Checkbox from '@/components/ui/Checkbox';
 
 export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps>(
   ({ open, onClose, onSave, todo, loading = false }, ref) => {
@@ -37,8 +25,8 @@ export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps
     // Update form when todo prop changes
     React.useEffect(() => {
       if (todo) {
-        setName(todo.name);
-        setDescription(todo.description);
+        setName(todo.title);
+        setDescription(todo.description || '');
         setCompleted(todo.completed);
       } else {
         setName('');
@@ -64,8 +52,8 @@ export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps
     const handleClose = () => {
       // Reset form to original values when closing
       if (todo) {
-        setName(todo.name);
-        setDescription(todo.description);
+        setName(todo.title);
+        setDescription(todo.description || '');
         setCompleted(todo.completed);
       }
       onClose();

@@ -2,17 +2,9 @@
 import * as React from 'react';
 import { Typography, Box, Paper, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { Todo } from '@/types';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
-
-export interface Todo {
-  id: string;
-  title: string;
-  description: string | null;
-  completed: boolean;
-  created_at: string;
-  updated_at: string;
-}
 
 export interface TodoItemProps {
   todo: Todo;
