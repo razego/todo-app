@@ -71,7 +71,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   };
 
   // Edit todo
-  const handleEditTodo = async (updateData: any) => {
+  const handleEditTodo = async (updateData: { id: string; title: string; description?: string; completed: boolean }) => {
     try {
       setIsEditing(true);
 

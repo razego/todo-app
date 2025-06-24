@@ -12,7 +12,7 @@ export interface DeleteTodoModalProps {
   loading?: boolean;
 }
 
-export const DeleteTodoModal = React.forwardRef<HTMLDivElement, DeleteTodoModalProps>(
+const DeleteTodoModal = React.forwardRef<HTMLDivElement, DeleteTodoModalProps>(
   ({ open, onClose, onConfirm, todoTitle, loading = false }, ref) => {
     return (
       <Modal 
@@ -29,7 +29,7 @@ export const DeleteTodoModal = React.forwardRef<HTMLDivElement, DeleteTodoModalP
           Are you sure you want to delete{' '}
           {todoTitle ? (
             <>
-              "<strong>{todoTitle}</strong>"
+              &ldquo;<strong>{todoTitle}</strong>&rdquo;
             </>
           ) : (
             'this todo'
@@ -58,5 +58,7 @@ export const DeleteTodoModal = React.forwardRef<HTMLDivElement, DeleteTodoModalP
     );
   }
 );
+
+DeleteTodoModal.displayName = 'DeleteTodoModal';
 
 export default DeleteTodoModal; 

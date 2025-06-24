@@ -16,7 +16,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Checkbox from '@/components/ui/Checkbox';
 
-export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps>(
+const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps>(
   ({ open, onClose, onSave, todo, loading = false }, ref) => {
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
@@ -123,5 +123,7 @@ export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps
     );
   }
 );
+
+EditTodoModal.displayName = 'EditTodoModal';
 
 export default EditTodoModal; 

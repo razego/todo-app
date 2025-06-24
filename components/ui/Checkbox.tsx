@@ -98,7 +98,7 @@ const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   },
 }));
 
-export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ label, size = 'medium', checked, defaultChecked, onChange, disabled, ...props }, ref) => {
     const [isChecked, setIsChecked] = React.useState(defaultChecked || false);
     
@@ -167,5 +167,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     return checkbox;
   }
 );
+
+Checkbox.displayName = 'Checkbox';
 
 export default Checkbox; 

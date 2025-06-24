@@ -74,7 +74,7 @@ const StyledInput = styled(TextField, {
   };
 });
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ size = 'medium', ...props }, ref) => {
     return (
       <StyledInput
@@ -86,5 +86,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
+
+Input.displayName = 'Input';
 
 export default Input; 

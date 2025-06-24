@@ -10,7 +10,7 @@ export interface ModalProps extends Omit<MuiModalProps, 'children'> {
   size?: 'small' | 'medium' | 'large';
 }
 
-const StyledBackdrop = styled(Backdrop)(({ theme }) => ({
+const StyledBackdrop = styled(Backdrop)(() => ({
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   backdropFilter: 'blur(4px)',
 }));
@@ -49,7 +49,7 @@ const StyledModalContainer = styled('div', {
   };
 });
 
-export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
+const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
   ({ open, onClose, children, size = 'medium', ...props }, ref) => {
     return (
       <MuiModal
@@ -65,5 +65,7 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
     );
   }
 );
+
+Modal.displayName = 'Modal';
 
 export default Modal; 

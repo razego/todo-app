@@ -166,7 +166,7 @@ const StyledButton = styled(MuiButton, {
   };
 });
 
-const LoadingSpinner = styled('div')(({ theme }) => ({
+const LoadingSpinner = styled('div')(() => ({
   width: '16px',
   height: '16px',
   border: '2px solid transparent',
@@ -181,7 +181,7 @@ const LoadingSpinner = styled('div')(({ theme }) => ({
   },
 }));
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, loading, leftIcon, rightIcon, disabled, variant = 'primary', size = 'medium', ...props }, ref) => {
     return (
       <StyledButton
@@ -208,5 +208,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
+Button.displayName = 'Button';
 
 export default Button;

@@ -50,7 +50,7 @@ const StyledTodoCard = styled(Paper, {
   },
 }));
 
-const ContentBox = styled(Box)(({ theme }) => ({
+const ContentBox = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
@@ -62,7 +62,7 @@ const TextContainer = styled(Box)({
   minWidth: 0, // Allows text to truncate properly
 });
 
-const ActionContainer = styled(Box)(({ theme }) => ({
+const ActionContainer = styled(Box)(() => ({
   display: 'flex',
   gap: '6px',
   alignItems: 'center',
@@ -70,7 +70,7 @@ const ActionContainer = styled(Box)(({ theme }) => ({
   marginLeft: '12px',
 }));
 
-const DateChip = styled(Chip)(({ theme }) => ({
+const DateChip = styled(Chip)(() => ({
   fontSize: '0.75rem',
   height: '24px',
   '& .MuiChip-label': {
@@ -105,7 +105,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
       <ContentBox>
         <Checkbox
           checked={todo.completed}
-          onChange={(e) => onToggleComplete(todo)}
+          onChange={() => onToggleComplete(todo)}
           size="small"
         />
         

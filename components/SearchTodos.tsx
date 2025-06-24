@@ -20,4 +20,6 @@ const SearchTodos = ({ value, onChange, placeholder = "Search by title or descri
   );
 };
 
+SearchTodos.displayName = 'SearchTodos';
+
 export default SearchTodos; 

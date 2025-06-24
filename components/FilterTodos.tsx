@@ -37,4 +37,6 @@ const FilterTodos = ({ value, onChange }: FilterTodosProps) => {
   );
 };
 
+FilterTodos.displayName = 'FilterTodos';
+
 export default FilterTodos; 

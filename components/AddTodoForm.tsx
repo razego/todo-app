@@ -10,7 +10,7 @@ export interface AddTodoFormProps {
   placeholder?: string;
 }
 
-export const AddTodoForm = React.forwardRef<HTMLDivElement, AddTodoFormProps>(
+const AddTodoForm = React.forwardRef<HTMLDivElement, AddTodoFormProps>(
   ({ onAdd, loading = false, placeholder = "Add Task" }, ref) => {
     const [todoName, setTodoName] = React.useState('');
 
@@ -62,5 +62,7 @@ export const AddTodoForm = React.forwardRef<HTMLDivElement, AddTodoFormProps>(
     );
   }
 );
+
+AddTodoForm.displayName = 'AddTodoForm';
 
 export default AddTodoForm; 
