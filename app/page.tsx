@@ -8,9 +8,11 @@ import NextLink from 'next/link';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
+import Checkbox from '@/components/ui/Checkbox';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   return (
     <Container maxWidth="lg">
       <Box
@@ -88,6 +90,12 @@ export default function Home() {
           </Box>
         </Modal>
 
+        <Checkbox 
+          label="Required field"
+          required
+          disabled={false}
+          defaultChecked={true}
+        />
       </Box>
     </Container>
   );
