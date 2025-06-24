@@ -104,7 +104,12 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (disabled) return;
-      setIsChecked(event.target.checked);
+      
+      // Only update internal state if this is an uncontrolled component
+      if (checked === undefined) {
+        setIsChecked(event.target.checked);
+      }
+      
       onChange?.(event);
     };
 
@@ -114,6 +119,28 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       <CheckboxContainer 
         checkboxSize={size}
         className={`${finalChecked ? 'checked' : ''} ${disabled ? 'disabled' : ''}`}
+        onClick={(e) => {
+          if (!disabled && !label) {
+            e.preventDefault();
+            // When there's no label, directly trigger the change
+            const inputElement = e.currentTarget.querySelector('input') as HTMLInputElement;
+            if (inputElement) {
+              // Create a proper synthetic event for the onChange handler
+              const event = {
+                target: {
+                  checked: !finalChecked,
+                  value: inputElement.value,
+                  name: inputElement.name,
+                } as HTMLInputElement,
+                currentTarget: inputElement,
+                preventDefault: () => {},
+                stopPropagation: () => {},
+              } as React.ChangeEvent<HTMLInputElement>;
+              
+              handleChange(event);
+            }
+          }
+        }}
       >
         <input
           ref={ref}

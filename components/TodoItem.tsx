@@ -113,7 +113,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
       <ContentBox>
         <Checkbox
           checked={todo.completed}
-          onChange={() => onToggleComplete(todo)}
+          onChange={(e) => onToggleComplete(todo)}
           size="small"
         />
         
