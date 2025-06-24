@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Typography, Box, Paper } from '@mui/material';
 import { supabase } from '@/lib/supabase';
-import { Todo } from '@/types';
+import { Todo, TodoUpdateData } from '@/types';
 import AddTodoForm from '@/components/AddTodoForm';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
 import EditTodoModal from '@/components/EditTodoModal';
@@ -71,7 +71,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   };
 
   // Edit todo
-  const handleEditTodo = async (updateData: { id: string; title: string; description?: string; completed: boolean }) => {
+  const handleEditTodo = async (updateData: TodoUpdateData) => {
     try {
       setIsEditing(true);
 
