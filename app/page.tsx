@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Button from '@/components/ui/Button';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
 import EditTodoModal from '@/components/EditTodoModal';
+import AddTodoForm from '@/components/AddTodoForm';
 
 export default function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
@@ -37,7 +38,7 @@ export default function Home() {
       />
 
 
-      <Box sx={{ mt: 4 }}>
+      <Box sx={{ mt: 4}}>
         <Button 
           variant="primary" 
           onClick={() => setIsEditModalOpen(true)}
@@ -51,6 +52,12 @@ export default function Home() {
         onSave={() => {setIsEditModalOpen(false)}}
         todo={null}
       />
+      </Box>
+
+      <Box sx={{ mt: 4 }}>
+        <AddTodoForm
+          onAdd={() => {}}
+        />
       </Box>
 
 

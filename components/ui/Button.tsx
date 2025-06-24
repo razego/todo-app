@@ -4,9 +4,9 @@ import { Button as MuiButton, ButtonProps as MuiButtonProps, styled } from '@mui
 import { alpha } from '@mui/material/styles';
 
 // Extended button props to include custom variants
-export interface ButtonProps extends Omit<MuiButtonProps, 'variant'> {
+export interface ButtonProps extends Omit<MuiButtonProps, 'variant' | 'size'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'xl';
   fullWidth?: boolean;
   loading?: boolean;
   leftIcon?: React.ReactNode;
@@ -60,6 +60,11 @@ const StyledButton = styled(MuiButton, {
       padding: '16px 32px',
       fontSize: '1.125rem',
       minHeight: '52px',
+    },
+    xl: {
+      padding: '20px 40px',
+      fontSize: '1.25rem',
+      minHeight: '60px',
     },
   };
 
