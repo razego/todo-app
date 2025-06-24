@@ -7,6 +7,7 @@ import AddTodoForm from '@/components/AddTodoForm';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
 import EditTodoModal from '@/components/EditTodoModal';
 import TodoItem from '@/components/TodoItem';
+import Button from '@/components/ui/Button';
 
 export interface TodoListProps {
   initialTodos?: Todo[];
@@ -16,6 +17,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   const [todos, setTodos] = React.useState<Todo[]>(initialTodos);
   const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isDeletingCompleted, setIsDeletingCompleted] = React.useState(false);
   const [isEditing, setIsEditing] = React.useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [editModalOpen, setEditModalOpen] = React.useState(false);
@@ -104,7 +106,28 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
     }
   };
 
+  // Delete all completed todos
+  const handleDeleteCompleted = async () => {
+    try {
+      setIsDeletingCompleted(true);
+      const { error } = await supabase
+        .from('todos')
+        .delete()
+        .eq('completed', true);
 
+      if (error) throw error;
+      setTodos(prev => prev.filter(todo => !todo.completed));
+    } catch (error) {
+      console.error('Error deleting completed todos:', error);
+    } finally {
+      setIsDeletingCompleted(false);
+    }
+  };
+
+
+
+  const completedTodos = todos.filter(todo => todo.completed);
+  const showDeleteCompletedButton = completedTodos.length > 0;
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
@@ -119,6 +142,36 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
           loading={isAdding}
           placeholder="What needs to be done?"
         />
+      </Box>
+
+      {/* Delete Completed Button - Always reserve space */}
+      <Box sx={{ 
+        mb: 3, 
+        display: 'flex', 
+        justifyContent: 'flex-end',
+        minHeight: '36px', // Reserve space for small button
+        alignItems: 'center',
+      }}>
+        <Button
+          variant="outline"
+          size="small"
+          onClick={handleDeleteCompleted}
+          loading={isDeletingCompleted}
+          disabled={isDeletingCompleted || !showDeleteCompletedButton}
+          sx={{
+            color: 'error.main',
+            borderColor: 'error.main',
+            opacity: showDeleteCompletedButton ? 1 : 0,
+            visibility: showDeleteCompletedButton ? 'visible' : 'hidden',
+            transition: 'opacity 0.2s ease-in-out, visibility 0.2s ease-in-out',
+            '&:hover': {
+              backgroundColor: showDeleteCompletedButton ? 'error.main' : 'transparent',
+              color: showDeleteCompletedButton ? 'white' : 'error.main',
+            },
+          }}
+        >
+          Delete {completedTodos.length} Completed
+        </Button>
       </Box>
 
       {/* Todo List */}
