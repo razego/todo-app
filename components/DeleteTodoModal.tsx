@@ -59,6 +59,4 @@ export const DeleteTodoModal = React.forwardRef<HTMLDivElement, DeleteTodoModalP
   }
 );
 
-DeleteTodoModal.displayName = 'DeleteTodoModal';
-
 export default DeleteTodoModal; 

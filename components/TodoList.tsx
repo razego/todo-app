@@ -160,9 +160,6 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
-      <Typography variant="h4" component="h1" sx={{ mb: 4, textAlign: 'center' }}>
-        Todo App
-      </Typography>
 
       {/* Add Todo Form */}
       <Box sx={{ mb: 4 }}>

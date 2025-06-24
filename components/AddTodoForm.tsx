@@ -63,6 +63,4 @@ export const AddTodoForm = React.forwardRef<HTMLDivElement, AddTodoFormProps>(
   }
 );
 
-AddTodoForm.displayName = 'AddTodoForm';
-
 export default AddTodoForm; 

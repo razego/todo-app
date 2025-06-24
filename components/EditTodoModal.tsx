@@ -124,6 +124,4 @@ export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps
   }
 );
 
-EditTodoModal.displayName = 'EditTodoModal';
-
 export default EditTodoModal; 
