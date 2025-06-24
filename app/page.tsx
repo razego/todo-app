@@ -9,9 +9,11 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Checkbox from '@/components/ui/Checkbox';
+import DeleteTodoModal from '@/components/DeleteTodoModal';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
   return (
     <Container maxWidth="lg">
@@ -97,6 +99,21 @@ export default function Home() {
           defaultChecked={true}
         />
       </Box>
+
+      <Box sx={{ mt: 4 }}>
+        <Button 
+          variant="primary" 
+          onClick={() => setIsDeleteModalOpen(true)}
+        >
+          Open Delete Modal
+        </Button>
+      </Box>
+      <DeleteTodoModal
+        open={isDeleteModalOpen}
+        onClose={() => {setIsDeleteModalOpen(false)}}
+        onConfirm={() => {setIsDeleteModalOpen(false)}}
+        todoTitle="Todo 1"
+      />
     </Container>
   );
 }
