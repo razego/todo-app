@@ -16,33 +16,18 @@ export interface Todo {
   updated_at: string;
 }
 
-export const TodoList = () => {
-  const [todos, setTodos] = React.useState<Todo[]>([]);
-  const [loading, setLoading] = React.useState(true);
+export interface TodoListProps {
+  initialTodos?: Todo[];
+}
+
+export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
+  const [todos, setTodos] = React.useState<Todo[]>(initialTodos);
   const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isEditing, setIsEditing] = React.useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [editModalOpen, setEditModalOpen] = React.useState(false);
   const [selectedTodo, setSelectedTodo] = React.useState<Todo | null>(null);
-
-  // Fetch todos from Supabase
-  const fetchTodos = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('todos')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTodos(data || []);
-    } catch (error) {
-      console.error('Error fetching todos:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Add new todo
   const handleAddTodo = async (title: string) => {
@@ -95,7 +80,6 @@ export const TodoList = () => {
           title: updatedTodo.name || updatedTodo.title,
           description: updatedTodo.description,
           completed: updatedTodo.completed,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', updatedTodo.id)
         .select()
@@ -119,7 +103,6 @@ export const TodoList = () => {
         .from('todos')
         .update({ 
           completed: !todo.completed,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', todo.id)
         .select()
@@ -132,18 +115,7 @@ export const TodoList = () => {
     }
   };
 
-  // Load todos on component mount
-  React.useEffect(() => {
-    fetchTodos();
-  }, []);
 
-  if (loading) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 4 }}>
-        <Typography>Loading todos...</Typography>
-      </Box>
-    );
-  }
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
