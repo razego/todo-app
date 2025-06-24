@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -6,8 +7,10 @@ import Link from '@mui/material/Link';
 import NextLink from 'next/link';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Modal from '@/components/ui/Modal';
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   return (
     <Container maxWidth="lg">
       <Box
@@ -33,7 +36,6 @@ export default function Home() {
 
         </Box>
         <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', mt: 4 }}>
-
         <Input 
           label="Email"
           type="email"
@@ -42,6 +44,49 @@ export default function Home() {
           placeholder="your@email.com"
         />
         </Box>
+
+        <Box sx={{ mt: 4 }}>
+          <Button 
+            variant="primary" 
+            onClick={() => setIsModalOpen(true)}
+          >
+            Open Modal
+          </Button>
+        </Box>
+
+        <Modal 
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          size="medium"
+        >
+          <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
+            Sample Modal
+          </Typography>
+          <Typography sx={{ mb: 3 }}>
+            This is a simple modal component! You can put any content here.
+          </Typography>
+          <Input 
+            label="Email"
+            type="email"
+            required
+            fullWidth
+            placeholder="your@email.com"
+          />
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="primary" 
+              onClick={() => setIsModalOpen(false)}
+            >
+              Confirm
+            </Button>
+          </Box>
+        </Modal>
 
       </Box>
     </Container>
