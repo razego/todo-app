@@ -1,12 +1,11 @@
 'use client';
 import * as React from 'react';
-import { Typography, Box, Paper, IconButton } from '@mui/material';
+import { Typography, Box, Paper } from '@mui/material';
 import { supabase } from '@/lib/supabase';
 import AddTodoForm from '@/components/AddTodoForm';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
 import EditTodoModal from '@/components/EditTodoModal';
-import Checkbox from '@/components/ui/Checkbox';
-import Button from '@/components/ui/Button';
+import TodoItem from '@/components/TodoItem';
 
 export interface Todo {
   id: string;
@@ -171,67 +170,19 @@ export const TodoList = () => {
           </Paper>
         ) : (
           todos.map((todo) => (
-            <Paper
+            <TodoItem
               key={todo.id}
-              sx={{
-                p: 3,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                opacity: todo.completed ? 0.7 : 1,
+              todo={todo}
+              onToggleComplete={handleToggleComplete}
+              onEdit={(todo) => {
+                setSelectedTodo(todo);
+                setEditModalOpen(true);
               }}
-            >
-              <Checkbox
-                checked={todo.completed}
-                onChange={() => handleToggleComplete(todo)}
-              />
-              
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    textDecoration: todo.completed ? 'line-through' : 'none',
-                    color: todo.completed ? 'text.secondary' : 'text.primary',
-                  }}
-                >
-                  {todo.title}
-                </Typography>
-                {todo.description && (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      textDecoration: todo.completed ? 'line-through' : 'none',
-                    }}
-                  >
-                    {todo.description}
-                  </Typography>
-                )}
-              </Box>
-
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant="outline"
-                  size="small"
-                  onClick={() => {
-                    setSelectedTodo(todo);
-                    setEditModalOpen(true);
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  size="small"
-                  onClick={() => {
-                    setSelectedTodo(todo);
-                    setDeleteModalOpen(true);
-                  }}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </Paper>
+              onDelete={(todo) => {
+                setSelectedTodo(todo);
+                setDeleteModalOpen(true);
+              }}
+            />
           ))
         )}
       </Box>
