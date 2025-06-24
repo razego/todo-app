@@ -13,10 +13,17 @@ export interface Todo {
   completed: boolean;
 }
 
+export interface TodoUpdateData {
+  id: string;
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
 export interface EditTodoModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (todo: Todo) => void;
+  onSave: (updateData: TodoUpdateData) => void;
   todo: Todo | null;
   loading?: boolean;
 }
@@ -43,14 +50,15 @@ export const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps
     const handleSave = () => {
       if (!todo || !name.trim()) return;
       
-      const updatedTodo: Todo = {
-        ...todo,
-        name: name.trim(),
+      // Return only the fields that should be updated
+      const updateData = {
+        id: todo.id,
+        title: name.trim(),
         description: description.trim(),
         completed,
       };
       
-      onSave(updatedTodo);
+      onSave(updateData);
     };
 
     const handleClose = () => {

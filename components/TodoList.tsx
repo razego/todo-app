@@ -35,7 +35,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
       setIsAdding(true);
       const { data, error } = await supabase
         .from('todos')
-        .insert([{ title, description: '' }])
+        .insert([{ title }])
         .select()
         .single();
 
@@ -71,17 +71,14 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   };
 
   // Edit todo
-  const handleEditTodo = async (updatedTodo: any) => {
+  const handleEditTodo = async (updateData: any) => {
     try {
       setIsEditing(true);
+
       const { data, error } = await supabase
         .from('todos')
-        .update({
-          title: updatedTodo.name || updatedTodo.title,
-          description: updatedTodo.description,
-          completed: updatedTodo.completed,
-        })
-        .eq('id', updatedTodo.id)
+        .update({...updateData})
+        .eq('id', updateData.id)
         .select()
         .single();
 
