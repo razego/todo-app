@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import NextLink from 'next/link';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 export default function Home() {
   return (
@@ -31,7 +32,16 @@ export default function Home() {
         <Button variant="danger" size="large">Click me</Button>
 
         </Box>
+        <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', mt: 4 }}>
 
+        <Input 
+          label="Email"
+          type="email"
+          required
+          fullWidth
+          placeholder="your@email.com"
+        />
+        </Box>
 
       </Box>
     </Container>
