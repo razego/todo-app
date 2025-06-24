@@ -10,10 +10,12 @@ import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Checkbox from '@/components/ui/Checkbox';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
+import EditTodoModal from '@/components/EditTodoModal';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   return (
     <Container maxWidth="lg">
@@ -113,6 +115,22 @@ export default function Home() {
         onClose={() => {setIsDeleteModalOpen(false)}}
         onConfirm={() => {setIsDeleteModalOpen(false)}}
         todoTitle="Todo 1"
+      />
+
+
+      <Box sx={{ mt: 4 }}>
+        <Button 
+          variant="primary" 
+          onClick={() => setIsEditModalOpen(true)}
+        >
+          Open Edit Modal
+        </Button>
+      </Box>
+      <EditTodoModal
+        open={isEditModalOpen}
+        onClose={() => {setIsEditModalOpen(false)}}
+        onSave={() => {setIsEditModalOpen(false)}}
+        todo={null}
       />
     </Container>
   );
