@@ -8,6 +8,8 @@ import DeleteTodoModal from '@/components/DeleteTodoModal';
 import EditTodoModal from '@/components/EditTodoModal';
 import TodoItem from '@/components/TodoItem';
 import Button from '@/components/ui/Button';
+import SearchTodos from '@/components/SearchTodos';
+import FilterTodos, { FilterStatus } from '@/components/FilterTodos';
 
 export interface TodoListProps {
   initialTodos?: Todo[];
@@ -22,6 +24,10 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [editModalOpen, setEditModalOpen] = React.useState(false);
   const [selectedTodo, setSelectedTodo] = React.useState<Todo | null>(null);
+  
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [filterStatus, setFilterStatus] = React.useState<FilterStatus>('all');
 
   // Add new todo
   const handleAddTodo = async (title: string) => {
@@ -126,6 +132,29 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
 
 
 
+  // Filter and search logic
+  const filteredTodos = React.useMemo(() => {
+    let filtered = todos;
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(todo => 
+        todo.title.toLowerCase().includes(query) ||
+        (todo.description && todo.description.toLowerCase().includes(query))
+      );
+    }
+
+    // Apply status filter
+    if (filterStatus === 'completed') {
+      filtered = filtered.filter(todo => todo.completed);
+    } else if (filterStatus === 'pending') {
+      filtered = filtered.filter(todo => !todo.completed);
+    }
+
+    return filtered;
+  }, [todos, searchQuery, filterStatus]);
+
   const completedTodos = todos.filter(todo => todo.completed);
   const showDeleteCompletedButton = completedTodos.length > 0;
 
@@ -141,6 +170,19 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
           onAdd={handleAddTodo}
           loading={isAdding}
           placeholder="What needs to be done?"
+        />
+      </Box>
+
+      {/* Search and Filter */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+        <SearchTodos
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+        
+        <FilterTodos
+          value={filterStatus}
+          onChange={setFilterStatus}
         />
       </Box>
 
@@ -182,8 +224,14 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
               No todos yet. Add one above to get started!
             </Typography>
           </Paper>
+        ) : filteredTodos.length === 0 ? (
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
+            <Typography color="text.secondary">
+              No todos match your search or filter criteria.
+            </Typography>
+          </Paper>
         ) : (
-          todos.map((todo) => (
+          filteredTodos.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}

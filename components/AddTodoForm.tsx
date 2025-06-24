@@ -42,13 +42,13 @@ export const AddTodoForm = React.forwardRef<HTMLDivElement, AddTodoFormProps>(
           placeholder={placeholder}
           disabled={loading}
           sx={{ flex: 1 }}
-          size="large"
+          size="small"
         />
         
         <Button
           type="submit"
           variant="primary"
-          size="xl"
+          size="small"
           disabled={!isValid || loading}
           loading={loading}
           sx={{ 
