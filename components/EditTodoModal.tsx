@@ -2,6 +2,10 @@
 import * as React from 'react';
 import { Typography, Box } from '@mui/material';
 import { Todo, TodoUpdateData } from '@/types';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Checkbox from '@/components/ui/Checkbox';
 
 export interface EditTodoModalProps {
   open: boolean;
@@ -10,11 +14,6 @@ export interface EditTodoModalProps {
   todo: Todo | null;
   loading?: boolean;
 }
-
-import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Checkbox from '@/components/ui/Checkbox';
 
 const EditTodoModal = React.forwardRef<HTMLDivElement, EditTodoModalProps>(
   ({ open, onClose, onSave, todo, loading = false }, ref) => {
