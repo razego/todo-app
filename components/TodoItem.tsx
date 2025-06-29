@@ -101,7 +101,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
   onDelete,
 }) => {
   return (
-    <StyledTodoCard completed={todo.completed}>
+    <StyledTodoCard completed={todo.completed} data-testid="todo-item">
       <ContentBox>
         <Checkbox
           checked={todo.completed}
