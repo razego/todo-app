@@ -1,7 +1,6 @@
 'use client';
 import * as React from 'react';
 import { Typography, Box, Paper } from '@mui/material';
-import { supabase } from '@/lib/supabase';
 import { Todo, TodoUpdateData } from '@/types';
 import AddTodoForm from '@/components/AddTodoForm';
 import DeleteTodoModal from '@/components/DeleteTodoModal';
@@ -33,13 +32,19 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   const handleAddTodo = async (title: string) => {
     try {
       setIsAdding(true);
-      const { data, error } = await supabase
-        .from('todos')
-        .insert([{ title }])
-        .select()
-        .single();
+      const response = await fetch('/api/todos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to add todo');
+      }
+
+      const data = await response.json();
       setTodos(prev => [data, ...prev]);
     } catch (error) {
       console.error('Error adding todo:', error);
@@ -54,12 +59,14 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
     
     try {
       setIsDeleting(true);
-      const { error } = await supabase
-        .from('todos')
-        .delete()
-        .eq('id', selectedTodo.id);
+      const response = await fetch(`/api/todos/${selectedTodo.id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to delete todo');
+      }
+
       setTodos(prev => prev.filter(todo => todo.id !== selectedTodo.id));
       setDeleteModalOpen(false);
       setSelectedTodo(null);
@@ -75,14 +82,19 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
     try {
       setIsEditing(true);
 
-      const { data, error } = await supabase
-        .from('todos')
-        .update({...updateData})
-        .eq('id', updateData.id)
-        .select()
-        .single();
+      const response = await fetch(`/api/todos/${updateData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to update todo');
+      }
+
+      const data = await response.json();
       setTodos(prev => prev.map(todo => todo.id === data.id ? data : todo));
       setEditModalOpen(false);
       setSelectedTodo(null);
@@ -96,16 +108,15 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   // Toggle todo completion
   const handleToggleComplete = async (todo: Todo) => {
     try {
-      const { data, error } = await supabase
-        .from('todos')
-        .update({ 
-          completed: !todo.completed,
-        })
-        .eq('id', todo.id)
-        .select()
-        .single();
+      const response = await fetch(`/api/todos/${todo.id}/toggle`, {
+        method: 'PATCH',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to toggle todo');
+      }
+
+      const data = await response.json();
       setTodos(prev => prev.map(t => t.id === data.id ? data : t));
     } catch (error) {
       console.error('Error toggling todo:', error);
@@ -116,12 +127,14 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   const handleDeleteCompleted = async () => {
     try {
       setIsDeletingCompleted(true);
-      const { error } = await supabase
-        .from('todos')
-        .delete()
-        .eq('completed', true);
+      const response = await fetch('/api/todos/completed', {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to delete completed todos');
+      }
+
       setTodos(prev => prev.filter(todo => !todo.completed));
     } catch (error) {
       console.error('Error deleting completed todos:', error);
