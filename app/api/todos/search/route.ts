@@ -1,5 +1,6 @@
 import { es } from '@/lib/esClient';
 import { NextResponse } from 'next/server';
+import { Todo } from '@/types';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -95,8 +96,8 @@ export async function GET(request: Request) {
   });
 
   const results = hits.hits.map(h => ({
-    id:        h._id,
-    ...(h._source as Record<string, any>)
+    id: h._id,
+    ...(h._source as Omit<Todo, 'id'>)
   }));
 
   return NextResponse.json(results);
