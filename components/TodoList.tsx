@@ -14,7 +14,17 @@ export interface TodoListProps {
   initialTodos?: Todo[];
 }
 
-export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
+// Debounce hook to limit how often we fire the search
+function useDebounce<T>(value: T, delay = 300): T {
+  const [debounced, setDebounced] = React.useState(value);
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
+export default function TodoList({ initialTodos = [] }: TodoListProps) {
   const [todos, setTodos] = React.useState<Todo[]>(initialTodos);
   const [isAdding, setIsAdding] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -23,10 +33,42 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [editModalOpen, setEditModalOpen] = React.useState(false);
   const [selectedTodo, setSelectedTodo] = React.useState<Todo | null>(null);
-  
+
   // Search and filter state
   const [searchQuery, setSearchQuery] = React.useState('');
+  const debouncedSearch = useDebounce(searchQuery, 250);
   const [filterStatus, setFilterStatus] = React.useState<FilterStatus>('all');
+
+  // Fetch fuzzy search results when search changes
+  React.useEffect(() => {
+    async function doSearch() {
+      if (!debouncedSearch.trim()) {
+        // When search is empty, fetch all todos from the database
+        try {
+          const res = await fetch('/api/todos');
+          if (!res.ok) throw new Error('Failed to fetch todos');
+          const allTodos: Todo[] = await res.json();
+          setTodos(allTodos);
+        } catch (err) {
+          console.error('Error fetching todos:', err);
+          setTodos(initialTodos); // Fallback to initial todos
+        }
+        return;
+      }
+      
+      try {
+        const res = await fetch(
+          `/api/todos/search?q=${encodeURIComponent(debouncedSearch)}`
+        );
+        if (!res.ok) throw new Error('Search failed');
+        const serverTodos: Todo[] = await res.json();
+        setTodos(serverTodos);
+      } catch (err) {
+        console.error('Error during search:', err);
+      }
+    }
+    doSearch();
+  }, [debouncedSearch, initialTodos]);
 
   // Add new todo
   const handleAddTodo = async (title: string) => {
@@ -34,16 +76,10 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
       setIsAdding(true);
       const response = await fetch('/api/todos', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to add todo');
-      }
-
+      if (!response.ok) throw new Error('Failed to add todo');
       const data = await response.json();
       setTodos(prev => [data, ...prev]);
     } catch (error) {
@@ -56,18 +92,13 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   // Delete todo
   const handleDeleteTodo = async () => {
     if (!selectedTodo) return;
-    
     try {
       setIsDeleting(true);
       const response = await fetch(`/api/todos/${selectedTodo.id}`, {
         method: 'DELETE',
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete todo');
-      }
-
-      setTodos(prev => prev.filter(todo => todo.id !== selectedTodo.id));
+      if (!response.ok) throw new Error('Failed to delete todo');
+      setTodos(prev => prev.filter(t => t.id !== selectedTodo.id));
       setDeleteModalOpen(false);
       setSelectedTodo(null);
     } catch (error) {
@@ -81,21 +112,14 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
   const handleEditTodo = async (updateData: TodoUpdateData) => {
     try {
       setIsEditing(true);
-
       const response = await fetch(`/api/todos/${updateData.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update todo');
-      }
-
+      if (!response.ok) throw new Error('Failed to update todo');
       const data = await response.json();
-      setTodos(prev => prev.map(todo => todo.id === data.id ? data : todo));
+      setTodos(prev => prev.map(t => t.id === data.id ? data : t));
       setEditModalOpen(false);
       setSelectedTodo(null);
     } catch (error) {
@@ -111,11 +135,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
       const response = await fetch(`/api/todos/${todo.id}/toggle`, {
         method: 'PATCH',
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to toggle todo');
-      }
-
+      if (!response.ok) throw new Error('Failed to toggle todo');
       const data = await response.json();
       setTodos(prev => prev.map(t => t.id === data.id ? data : t));
     } catch (error) {
@@ -130,11 +150,7 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
       const response = await fetch('/api/todos/completed', {
         method: 'DELETE',
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete completed todos');
-      }
-
+      if (!response.ok) throw new Error('Failed to delete completed todos');
       setTodos(prev => prev.filter(todo => !todo.completed));
     } catch (error) {
       console.error('Error deleting completed todos:', error);
@@ -143,37 +159,25 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
     }
   };
 
-
-
-  // Filter and search logic
+  // Apply only status filter (search is handled by Elasticsearch)
   const filteredTodos = React.useMemo(() => {
     let filtered = todos;
 
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(todo => 
-        todo.title.toLowerCase().includes(query) ||
-        (todo.description && todo.description.toLowerCase().includes(query))
-      );
-    }
-
-    // Apply status filter
+    // Apply status filter only - search is handled by Elasticsearch
     if (filterStatus === 'completed') {
-      filtered = filtered.filter(todo => todo.completed);
+      filtered = filtered.filter(t => t.completed);
     } else if (filterStatus === 'pending') {
-      filtered = filtered.filter(todo => !todo.completed);
+      filtered = filtered.filter(t => !t.completed);
     }
-
+    
     return filtered;
-  }, [todos, searchQuery, filterStatus]);
+  }, [todos, filterStatus]);
 
   const completedTodos = todos.filter(todo => todo.completed);
   const showDeleteCompletedButton = completedTodos.length > 0;
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
-
       {/* Add Todo Form */}
       <Box sx={{ mb: 4 }}>
         <AddTodoForm
@@ -189,19 +193,18 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
           value={searchQuery}
           onChange={setSearchQuery}
         />
-        
         <FilterTodos
           value={filterStatus}
           onChange={setFilterStatus}
         />
       </Box>
 
-      {/* Delete Completed Button - Always reserve space */}
-      <Box sx={{ 
-        mb: 3, 
-        display: 'flex', 
+      {/* Delete Completed Button */}
+      <Box sx={{
+        mb: 3,
+        display: 'flex',
         justifyContent: 'flex-end',
-        minHeight: '36px', // Reserve space for small button
+        minHeight: '36px',
         alignItems: 'center',
       }}>
         <Button
@@ -241,16 +244,16 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
             </Typography>
           </Paper>
         ) : (
-          filteredTodos.map((todo) => (
+          filteredTodos.map(todo => (
             <TodoItem
               key={todo.id}
               todo={todo}
               onToggleComplete={handleToggleComplete}
-              onEdit={(todo: Todo) => {
+              onEdit={todo => {
                 setSelectedTodo(todo);
                 setEditModalOpen(true);
               }}
-              onDelete={(todo: Todo) => {
+              onDelete={todo => {
                 setSelectedTodo(todo);
                 setDeleteModalOpen(true);
               }}
@@ -288,6 +291,4 @@ export const TodoList = ({ initialTodos = [] }: TodoListProps) => {
       />
     </Box>
   );
-};
-
-export default TodoList; 
+}
